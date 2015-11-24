@@ -357,6 +357,9 @@ public class Parse {
     private static boolean isValidVarPunct(char ch) {
 	return allowed.indexOf(ch) >= 0;
     }
+    private static boolean isXLetter(char ch) {
+        return (ch >= 160 && Character.isJavaIdentifierPart(ch));
+    }
 
     /**
      * The <code>parseDollar</code> method parses a $\ foo
@@ -374,7 +377,7 @@ public class Parse {
 	    parseVarBlock(state);
 	} else {
 	    /* Variable names use this range here. */
-	    while((isLetter(ch) || isDigit(ch) || isValidVarPunct(ch))) {
+	    while((isLetter(ch) || isDigit(ch) || isValidVarPunct(ch) || isXLetter(ch))) {
 		appendToCurrent(ch);
 		ch = state.nextchar();
 	    }
@@ -386,6 +389,7 @@ public class Parse {
 // 	System.out.println("parser vvvv");
 // 	PrintThing.printThing(new Thing(outBuf));
 // 	System.out.println("parser ^^^^");
+        if (outGroup.size() < 1) System.err.println("ERROR parsing line " + state.lineno);
 	outGroup.setElementAt(new SubstThing(outBuf.getStringRep()),
 			      outGroup.size() - 1);
     }
